@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: portfolio-backend
+    runtime: image
+    image:
+      url: eclipse-temurin:21-jre
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: portfolio-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: portfolio-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: portfolio-db
+          property: password
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+    buildCommand: |
+      apt-get update
+      apt-get install -y maven
+      mvn clean install -DskipTests
+    startCommand: java -jar target/portfolio-backend-1.0.0.jar
+
+databases:
+  - name: portfolio-db
+    plan: free
